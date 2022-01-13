@@ -1,0 +1,53 @@
+## a catalogue of files in this directory
+## so help me god I will fucking kill you if there is an uncatalogued file
+
+
+
+
+prot_coding_transcripts.bed - all protein coding transcripts from gencode ( fucking hope)
+
+prot_coding_transcripts_uniq_TSS.bed - the protein coding transcripts but only first TSS, run through first_TSS.sh or whatever that script is called
+prot_coding_transcripts_uniq_TSS_flipped.bed - all upstream antisense regions to genes (NOT CHECKED FOR UPSTREAM ANTISENSE GENES) - it is the unique TSS run through bedflip.sh
+siW_all.bed - you know the drill
+prot_coding_transcripts_uniq_TSS_flipped_nopcg.bed - the flipped bed with no pcg i.e intersecBed -v -s -a prot_coding_transcripts_uniq_TSS_flipped.bed -b prot_coding_transcripts.bed
+
+PROMPT_regions_siW.bed are PROMPT regions sensitive to ZC3H4 i.e. intersectBed -u -s -a prot_coding_transcripts_uniq_TSS_flipped_nopcg.bed -b siW_all.bed > PROMPT_regions_siW.bed
+
+PROMPT_regions_noSiW.bed - prompt regions not sensitive to zc3h4 i.e intersectBed -v -s -a prot_coding_transcripts_uniq_TSS_flipped_nopcg.bed -b siW_all.bed
+
+nanopore_prompts_noSiW.bed - all nanopore CONTROL and siEXOSC3 reads that overlap with PROMPT_regions_noSiW.bed THAT ALSO HAVE AT LEAST 80% OVERLAP WITH THE 2kb PROMPT REGION, THUS WE ARE ARE ''BIASING'' A BIT HERE- THIS NEEDS TO BE COLLAPSED
+intersectBed -f 0.8 -u -s -a /Users/IEO5559/Desktop/misc/beds/all_control_siE_reads_filt.bed -b PROMPT_regions_noSiW.bed | sort -k1,1 -k2,2n > nanopore_prompts_noSiW.bed
+
+intersectBed -f 0.8 -u -s -a /Users/IEO5559/Desktop/misc/beds/all_control_siE_reads_filt.bed -b PROMPT_regions_siW.bed | sort -k1,1 -k2,2n > nanopore_prompts_siW.bed
+
+awk '{print $1"\t"$2"\t"$3"\t"$4"\t""0""\t"$6}' PROMPT_regions_noSiW.bed > ffs_promptsnosiW.bed (for viewing on UCSC)
+
+intersectBed -f 0.8 -u -s -a /Users/IEO5559/Desktop/misc/beds/all_control_siE_reads_filt.bed -b PROMPT_regions_noSiW.bed | sort -k1,1 -k2,2n | intersectBed -v -a stdin -b prot_coding_transcripts.bed > nanopore_prompts_noSiW_nopcg.bed
+
+## get non-siW prompts that do not have pcg on other strand
+intersectBed -v -a PROMPT_regions_noSiW.bed -b prot_coding_transcripts.bed > PROMPT_regions_noSiW_nopcg.bed
+
+#### to find approx length of prompts according to nanopore
+
+nanopore_prompts_noSiW_merged.bed
+mergeBed -s -i nanopore_prompts_noSiW_nopcg.bed -c 1,6 -o count,distinct > nanopore_prompts_noSiW_merged.bed
+
+nanopore_prompts_siW_merged.bed
+mergeBed -s -i nanopore_prompts_siW.bed -c 1,6 -o count,distinct > nanopore_prompts_siW_merged.beds
+
+
+##THIS IS DEGENERATE (2837 unique, 9038 totla isoforms)
+intersectBed -u -s -a gencode.v39.annotation.bed -b ../../prog/bedfiles/PROMPT_regions_noSiW_nopcg.bed | awk '{print $1"\t"$2"\t"$3"\t"$13"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9"\t"$10"\t"$11"\t"$12}' > PROMPTS_noSiW_nopcg_alreadyannotated.bed
+
+intersectBed -v -s -a ../../prog/bedfiles/PROMPT_regions_noSiW_nopcg.bed -b PROMPTS_noSiW_nopcg_alreadyannotated.bed > PROMPTS_noSiW_nopcg_NOTannotated
+
+##NB there are many more unannotated PROMPTS than annotated
+(9.7 unique regions vs 2.8k unique regions)
+
+intersectBed -u -s -a PROMPTS_noSiW_nopcg_NOTannotated.bed -b ../../prog/exosc_related/prompt_counts/2reps_PROMPTS_noSiW_pA.bed > represented_PROMPTS_noSiW_NOTannotated_pA.bed
+
+intersectBed -u -s -a PROMPTS_noSiW_nopcg_NOTannotated.bed -b ../../prog/exosc_related/prompt_counts/2reps_PROMPTS_noSiW.bed > represented_PROMPTS_noSiW_NOTannotated.bed
+
+
+
+
