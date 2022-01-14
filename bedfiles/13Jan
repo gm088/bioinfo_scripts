@@ -1,0 +1,38 @@
+bedparse gtf2bed gencode.v39.annotation.gtf --extraFields gene_name > gencode.v39.annotation.bed
+
+##THIS IS DEGENERATE (2837 unique, 9038 totla isoforms)
+intersectBed -u -s -a gencode.v39.annotation.bed -b ../../prog/bedfiles/PROMPT_regions_noSiW_nopcg.bed | awk '{print $1"\t"$2"\t"$3"\t"$13"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9"\t"$10"\t"$11"\t"$12}' > PROMPTS_noSiW_nopcg_alreadyannotated.bed
+
+intersectBed -v -s -a ../../prog/bedfiles/PROMPT_regions_noSiW_nopcg.bed -b PROMPTS_noSiW_nopcg_alreadyannotated.bed > PROMPTS_noSiW_nopcg_NOTannotated.bed
+
+##NB there are many more unannotated PROMPTS than annotated
+(9.7 unique regions vs 2.8k unique regions)
+
+intersectBed -u -s -a PROMPTS_noSiW_nopcg_NOTannotated.bed -b ../../prog/exosc_related/prompt_counts/2reps_PROMPTS_noSiW_pA.bed > represented_PROMPTS_noSiW_NOTannotated_pA.bed
+
+intersectBed -u -s -a PROMPTS_noSiW_nopcg_NOTannotated.bed -b ../../prog/exosc_related/prompt_counts/2reps_PROMPTS_noSiW.bed > represented_PROMPTS_noSiW_NOTannotated.bed
+
+
+##load up the exosc3 track, load the illumina estim 3' collapse, then load up the annotated PROMPTS
+
+MRPL20-DT and some others I guess
+
+we can try 3' end analysis on the annotated ones
+
+
+14th JAN 2022
+
+##THIS IS DEGENERATAE
+intersectBed -u -s -a ../../misc/annotations/gencode.v39.annotation.bed -b PROMPT_regions_siW.bed | awk '{print $1"\t"$2"\t"$3"\t"$13"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9"\t"$10"\t"$11"\t"$12}' > PROMPTS_siW_alreadyannotated.bed
+
+intersectBed -v -s -a PROMPT_regions_siW.bed -b PROMPTS_siW_alreadyannotated.bed > PROMPTS_siW_NOTannotated.bed
+
+awk '{if($7!="."){print $0}}' nonpA_assembly_prompts.gtf > nonpA_noncoding_assembly.gtf
+
+
+
+
+
+
+
+
