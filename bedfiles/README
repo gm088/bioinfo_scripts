@@ -1,10 +1,10 @@
 ## a catalogue of files in this directory
-## so help me god I will fucking kill you if there is an uncatalogued file
+## so help me god I will kill you if there is an uncatalogued file
 
 
 
 
-prot_coding_transcripts.bed - all protein coding transcripts from gencode ( fucking hope)
+prot_coding_transcripts.bed - all protein coding transcripts from gencode ( hope)
 
 prot_coding_transcripts_uniq_TSS.bed - the protein coding transcripts but only first TSS, run through first_TSS.sh or whatever that script is called
 prot_coding_transcripts_uniq_TSS_flipped.bed - all upstream antisense regions to genes (NOT CHECKED FOR UPSTREAM ANTISENSE GENES) - it is the unique TSS run through bedflip.sh
